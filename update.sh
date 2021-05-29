@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
-# SPDX-FileCopyrightText: 2021 "KonQuesting" <kon@konquesting.com>
+# SPDX-FileCopyrightText: 2021 "KonQuesting" <code@konquesting.com>
 
 user="$(id -u 2>/dev/null)"
 
@@ -26,13 +26,13 @@ found="$?"
 
 if [ $found = 0 ] ; then
     apt list --upgradable
-    printf "\033[1;35m$new\033[m\n"
+    printf "\033[1;35m%s\033[m\n" "$new"
     echo
     confirmed="no"
     while [ $confirmed = "no" ]
     do
         printf "\033[1;33mDownload and install these updates? [y/N/changes]: \033[m"
-        read yn1
+        read -r yn1
         case $yn1 in
             [Yy]|[Yy][Ee][Ss]*)
                 confirmed="yes"
@@ -40,12 +40,12 @@ if [ $found = 0 ] ; then
                 ;;
             [Cc][Hh][Aa][Nn][Gg][Ee]* )
                 lookup=$(echo "$yn1" | sed 's/change.* //i')
-                apt-get changelog $lookup
+                apt-get changelog "$lookup"
                 continue
                 ;;
             [Cc]* )
                 lookup=$(echo "$yn1" | sed 's/c //i')
-                apt-get changelog $lookup
+                apt-get changelog "$lookup"
                 continue
                 ;;
             *)
@@ -56,7 +56,7 @@ if [ $found = 0 ] ; then
     if [ "$1" = "flatpak" ] || [ "$1" = "f" ] ; then
         echo
         printf "\033[1;33mGet Flatpak updates? [y/N]: \033[m"
-        read yn2
+        read -r yn2
         case $yn2 in
             [Yy]|[Yy][Ee][Ss]* )
                 flatpak update
