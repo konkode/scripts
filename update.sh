@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
+# SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: 2021 "KonQuesting" <code@konquesting.com>
 
 user="$(id -u 2>/dev/null)"
