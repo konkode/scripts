@@ -16,7 +16,7 @@ asRoot='sh -c'
         elif exists su; then
             asRoot='su -c'
         else
-            printf "\033[1;31mCan't get permission to install to system partition. Quitting.\033[m\n"
+            printf "\033[1;31mCan't get permission to install to system-wide directory. Quitting.\033[m\n"
             exit 1
         fi
     fi
