@@ -3,24 +3,26 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: 2021 "KonQuesting" <code@konquesting.com>
 
-user="$(id -u 2>/dev/null)"
+needs_root() {
+    user="$(id -u 2>/dev/null)"
+    exists() {
+        command -v "$@" > /dev/null 2>&1
+    }
 
-exists() {
-    command -v "$@" > /dev/null 2>&1
+    asRoot='sh -c'
+        if [ "$user" != 0 ]; then
+            if exists sudo; then
+                asRoot='sudo -E sh -c'
+            elif exists su; then
+                asRoot='su -c'
+            else
+                printf "\033[1;31mCan't get permission to upgrade system files. Quitting.\033[m\n"
+                exit 1
+            fi
+        fi
 }
 
-asRoot='sh -c'
-    if [ "$user" != 0 ]; then
-        if exists sudo; then
-            asRoot='sudo -E sh -c'
-        elif exists su; then
-            asRoot='su -c'
-        else
-            printf "\033[1;31mCan't get permission to upgrade system files. Quitting.\033[m\n"
-            exit 1
-        fi
-    fi
-
+needs_root
 new="$($asRoot "apt update 2>/dev/null |grep -oE '.{0,20}can be upgraded'")"
 found="$?"
 

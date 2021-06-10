@@ -3,28 +3,30 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # SPDX-FileCopyrightText: 2021 "KonQuesting" <code@konquesting.com>
 
-user="$(id -u 2>/dev/null)"
+needs_root() {
+    user="$(id -u 2>/dev/null)"
+    exists() {
+        command -v "$@" > /dev/null 2>&1
+    }
 
-exists() {
-    command -v "$@" > /dev/null 2>&1
-}
-
-asRoot='sh -c'
-    if [ "$user" != 0 ]; then
-        if exists sudo; then
-            asRoot='sudo -E sh -c'
-        elif exists su; then
-            asRoot='su -c'
-        else
-            printf "\033[1;31mCan't get permission to install to system directory. Quitting.\033[m\n"
-            exit 1
+    asRoot='sh -c'
+        if [ "$user" != 0 ]; then
+            if exists sudo; then
+                asRoot='sudo -E sh -c'
+            elif exists su; then
+                asRoot='su -c'
+            else
+                printf "\033[1;31mCan't get permission to install to system directory. Quitting.\033[m\n"
+                exit 1
+            fi
         fi
-    fi
+}
 
 link="$(curl https://github.com/mikefarah/yq/releases/latest 2>/dev/null | grep -o '"http.*"')"
 version="$(echo "$link" | grep -o 'v[0-9].*[0-9]')"
 
 echo "Downloading from ${link}"
+needs_root
 
 install() {
     wget https://github.com/mikefarah/yq/releases/download/"${version}"/yq_linux_amd64.tar.gz -O - 2>/dev/null | tar xz &&
